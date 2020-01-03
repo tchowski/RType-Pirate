@@ -1,0 +1,954 @@
+Network Working Group                                Mathieu O Quentin D
+Request for Comments: 2223                             Maxime V Alexis B
+Category: Informational                                    December 2019
+
+
+                      R-type communication procotol
+
+Status of this Memo
+
+   This memo provides information for the rtype projet, a third year
+   project. It allows anyone to understand how the clients and the 
+   server communicate by describing the protocol
+
+Copyright Notice
+
+   Copyright (C)  (2019).  All Rights Reserved.
+
+Table of Contents
+
+   1.   Introduction . . . . . . . . . . . . . . . . . . . . . . . . 1
+   2.   UDP protocol . . . . . . . . . . . . . . . . . . . . . . . . 2
+   3.   String format rules. . . . . . . . . . . . . . . . . . . . . 3
+   4.   Keywords description . . . . . . . . . . . . . . . . . . . . 4
+
+
+
+                             Informational                      [Page 1]
+
+RFC 2223               R-type communication procotol       December 2019
+
+1.  Introduction
+
+   The goal of this project was to create a multiplayer video game, the
+   R-type. 4 players are playing together to survive waves of monsters.
+   To faciliate adding new clients to our server, we created a protocol
+   that we will describe in this document. First you need to use TCP
+   to connect your client to one of our waiting rooms, then when the 
+   game starts, you have to handle UDP.
+
+2.  UDP protocol
+
+   As we saw in the introduction, once you are in the game, all the
+   communications are handled with UDP protocol. The reason of this
+   choice is the speed of the UDP protocol. We have to update client's
+   display screen as fast as we can.
+
+   Your client MUST send a packet wich can be cast in a C or structure
+   C++ structure (struct). In this structure, we can find 2 fields.
+   - fired is a bool that is true if the client fired
+   - pos is a pair containing the ID of the client's entity spaceship
+   and a pair of float, wich is the client position X Y
+   This structure have to be sent everytime the client fire or move.
+
+   Your client MUST be able to receive a packet wich can be cast in a C
+   or structure C++ structure (struct). In this structure, we can find 3
+   fields :
+   - construct, wich is a string containing a newly created entity and
+   all his components
+   - update, wich is a string containing all the new components values
+   - destruct, wich is a string containing ID of entities that have to
+   be destroy
+
+   overview :
+                    struct my_struct {
+                        std::string construct;
+                        std::string update;
+                        std::string destruct;
+                        bool fired;
+                        std::pair<unsigned int, std::pair<float, float>> pos;
+                    }
+
+
+
+
+
+
+                             Informational                      [Page 2]
+
+RFC 2223               R-type communication procotol       December 2019
+
+3.  Format Rules
+
+   The 3 string in our UDP structures are formated in a special way.
+   Your client MUST be able to correctly parse the datas stored in
+   this strings. All the datas are separated with a single space
+
+   - destruct is pretty simple, it just cotains a list of ID separated
+   by a single space
+
+            example : "4 462 12 765 34 12 949 6 3"
+
+   - construct contains a single entity that have to be created by the
+   client. You can read an uppercase keyword (corresponding to a
+   component) followed by its value. All separators are single spaces.
+
+            example : "ID 4 HITBOX 13 15 TEAM 1 POSITION 65 23"
+
+   - update contains a list of "construct". It means that you have in
+   one string a list of entity with all its components that need to be
+   changed. All newly entity description MUST start with ID.
+
+            example : "ID 3 HITBOX 34 65 POSITION 54 ID 2 POSITION 5 56"
+
+
+
+
+
+                             Informational                      [Page 3]
+
+RFC 2223               R-type communication procotol       December 2019
+
+4. Keyword description
+
+
+   Here is the list of Keywords corresponding to a component :
+   - KEYWORD variable (variable type)
+
+   Keywords description :
+   - POSITION x y (float, float)
+   - HEALTH hp (unsigned int)
+   - BOUNCE direction (short, short)
+   - HORIZAL direction (short int)
+   - TEAM id (unsigned int)
+   - SCORE points (unsigned int)
+   - AUDIO path (string)
+   - RANDOMGUN frequence (short int)
+   - DRAWABLE path (string)
+   - HITBOX x y (unsigned int, unsigned int)
+   - INPUTMOVE id (unsigned int)
+
+
+
+
+
+
+Postel & Reynolds            Informational                      [Page 5]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+   3b.  PostScript Format Rules
+
+      Standard page size is 8 1/2 by 11 inches.
+
+      Margin of 1 inch on all sides (top, bottom, left, and right).
+
+      Main text should have a point size of no less than 10 points with
+      a line spacing of 12 points.
+
+      Footnotes and graph notations no smaller than 8 points with a line
+      spacing of 9.6 points.
+
+      Three fonts are acceptable: Helvetica, Times Roman, and Courier.
+      Plus their bold-face and italic versions.  These are the three
+      standard fonts on most PostScript printers.
+
+      Prepare diagrams and images based on lowest common denominator
+      PostScript.  Consider common PostScript printer functionality and
+      memory requirements.
+
+      The following PostScript commands should not be used:
+      initgraphics, erasepage, copypage, grestoreall, initmatrix,
+      initclip, banddevice, framedevice, nulldevice and renderbands.
+
+      Note that the number of pages in a document and the page numbers
+      on which various sections fall will likely differ in the ASCII and
+      the PostScript versions.  Thus cross references in the text by
+      section number usually are easier to keep consistent than cross
+      references by page number.
+
+      These PostScript rules are likely to changed and expanded as
+      experience is gained.
+
+      RFCs in PostScript Format may be submitted to the RFC Editor in
+      e-mail messages (or as online files).  If you plan to submit a
+      document in PostScript please consult the RFC Editor first.
+
+      Note that since the ASCII text version of the RFC is the primary
+      version, the PostScript version must match the text version.  The
+      RFC Editor must decide if the PostScript version is "the same as"
+      the ASCII version before the PostScript version can be published.
+
+
+
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                      [Page 6]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+4.  Headers and Footers
+
+   There is the first page heading, the running headers, and the running
+   footers.
+
+   4a.  First Page
+
+      Please see the front page of this memo for an example of the front
+      page heading.  On the first page there is no running header.  The
+      top of the first page has the following items:
+
+      Network Working Group
+
+         The traditional heading for the group that founded the RFC
+         series.  This appears on the first line on the left hand side
+         of the heading.
+
+      Request for Comments: nnnn
+
+         Identifies this as a request for comments and specifies the
+         number.  Indicated on the second line on the left side.  The
+         actual number is filled in at the last moment before
+         publication by the RFC Editor.
+
+      Author
+
+         The author's name (first initial and last name only) indicated
+         on the first line on the right side of the heading.
+
+      Organization
+
+         The author's organization, indicated on the second line on the
+         right side.
+
+      Date
+
+         This is the Month and Year of the RFC Publication. Indicated on
+         the third line on the right side.
+
+      Updates or Obsoletes
+
+         If this RFC Updates or Obsoletes another RFC, this is indicated
+         as third line on the left side of the heading.
+
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                      [Page 7]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+      Category
+
+         The category of this RFC, one of: Standards Track, Best Current
+         Practice, Informational, or Experimental.  This is indicated on
+         the third (if there is no Updates or Obsoletes indication) or
+         fourth line of the left side.
+
+      Other Numbers
+
+         Other numbers in the RFC series of notes include the subseries
+         of FYI (For Your Information) [4], BCP (Best Current Practice)
+         [5], and STD (Standard) [6].  These are placed on the left
+         side.
+
+      Title
+
+         The title appears, centered, below the rest of the heading.
+         Periods or "dots" in the titles are not allowed.
+
+      If there are multiple authors and if the multiple authors are from
+      multiple organizations the right side heading may have additional
+      lines to accommodate them and to associate the authors with the
+      organizations properly.
+
+   4b.  Running Headers
+
+      The running header in one line (on page 2 and all subsequent
+      pages) has the RFC number on the left (RFC NNNN), the (possibly
+      nshortened form) title centered, and the date (Month Year) on the
+      right.
+
+   4c.  Running Footers
+
+      The running footer in one line (on all pages) has the author's
+      last name on the left, category centered, and the page number on
+      the right ([Page N]).
+
+5.  Status Section
+
+   Each RFC must include on its first page the "Status of this Memo"
+   section which contains two elements: (1) a paragraph describing the
+   type of the RFC, and (2) the distribution statement.
+
+   The content of this section will be one of the four following
+   statements.
+
+
+
+
+
+
+Postel & Reynolds            Informational                      [Page 8]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+   Standards Track
+
+      "This document specifies an Internet standards track protocol for
+      the Internet community, and requests discussion and suggestions
+      for improvements.  Please refer to the current edition of the
+      "Internet Official Protocol Standards" (STD 1) for the
+      standardization state and status of this protocol.  Distribution
+      of this memo is unlimited."
+
+   Best Current Practice
+
+      "This document specifies an Internet Best Current Practices for
+      the Internet Community, and requests discussion and suggestions
+      for improvements.  Distribution of this memo is unlimited."
+
+   Experimental
+
+      "This memo defines an Experimental Protocol for the Internet
+      community.  This memo does not specify an Internet standard of any
+      kind.  Discussion and suggestions for improvement are requested.
+      Distribution of this memo is unlimited."
+
+   Informational
+
+      "This memo provides information for the Internet community.  This
+      memo does not specify an Internet standard of any kind.
+      Distribution of this memo is unlimited."
+
+6.  Copyright Notice
+
+   Immediately following the Status section the statement, "Copyright
+   (C) The Internet Society (date).  All Rights Reserved." is placed.
+   Also, see Section 11 for the full statement that must appear at the
+   end of the document.
+
+7.  Introduction Section
+
+   Each RFC should have an Introduction section that (among other
+   things) explains the motivation for the RFC and (if appropriate)
+   describes the applicability of the protocol described.
+
+      Normally, this will be the "abstract" section from the Internet
+      Draft.  If the RFC is not based on an I-D, other possibilities
+      are:
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                      [Page 9]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+         Protocol
+
+            This protocol is intended to provide the bla-bla service,
+            and be used between clients and servers on host computers.
+            Typically the clients are on workstation hosts and the
+            servers on mainframe hosts.
+
+            or
+
+            This protocol is intended to provide the bla-bla service,
+            and be used between special purpose units such as terminal
+            servers or routers and a monitoring host.
+
+         Discussion
+
+            The purpose of this RFC is to focus discussion on particular
+            problems in the Internet and possible methods of solution.
+            No proposed solutions in this document are intended as
+            standards for the Internet.  Rather, it is hoped that a
+            general consensus will emerge as to the appropriate solution
+            to such problems, leading eventually to the adoption of
+            standards.
+
+         Interest
+
+            This RFC is being distributed to members of the Internet
+            community in order to solicit their reactions to the
+            proposals contained in it.  While the issues discussed may
+            not be directly relevant to the research problems of the
+            Internet, they may be interesting to a number of researchers
+            and implementers.
+
+         Status Report
+
+            In response to the need for maintenance of current
+            information about the status and progress of various
+            projects in the Internet community, this RFC is issued for
+            the benefit of community members.  The information contained
+            in this document is accurate as of the date of publication,
+            but is subject to change.  Subsequent RFCs will reflect such
+            changes.
+
+      These paragraphs need not be followed word for word, but the
+      general intent of the RFC must be made clear.
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                     [Page 10]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+8.  References Section
+
+   Nearly all RFCs contain citations to other documents, and these are
+   listed in a References section near the end of the RFC.  There are
+   many styles for references, and the RFCs have one of their own.
+   Please follow the reference style used in recent RFCs.  See the
+   reference section of this RFC for an example.  Please note that for
+   protocols that have been assigned STD numbers, the STD number must be
+   included in the reference.
+
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  BCP 14, RFC 2119 [3], defines these words as they
+   should be interpreted in IETF documents.
+
+9.  Security Considerations Section
+
+   All RFCs must contain a section near the end of the document that
+   discusses the security considerations of the protocol or procedures
+   that are the main topic of the RFC.
+
+10.  Author's Address Section
+
+   Each RFC must have at the very end a section giving the author's
+   address, including the name and postal address, the telephone number,
+   (optional: a FAX number) and the Internet email address.
+
+11.  Copyright Section
+
+   Per BCP 9, RFC 2026 [2], "The following copyright notice and
+   disclaimer shall be included in all ISOC standards-related
+   documentation."  The following statement should be placed on the last
+   page of the RFC, as the "Full Copyright Statement".
+
+      "Copyright (C) The Internet Society (date).  All Rights Reserved.
+
+      This document and translations of it may be copied and furnished
+      to others, and derivative works that comment on or otherwise
+      explain it or assist in its implementation may be prepared, copied,
+      published and distributed, in whole or in part, without
+      restriction of any kind, provided that the above copyright notice
+      and this paragraph are included on all such copies and derivative
+      works.  However, this document itself may not be modified in any
+      way, such as by removing the copyright notice or references to the
+      Internet Society or other Internet organizations, except as needed
+      for the purpose of developing Internet standards in which case the
+      procedures for copyrights defined in the Internet Standards
+      process must be followed, or as required to translate it into
+
+
+
+Postel & Reynolds            Informational                     [Page 11]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+      languages other than English.
+
+      The limited permissions granted above are perpetual and will not
+      be revoked by the Internet Society or its successors or assigns.
+
+      This document and the information contained herein is provided on
+      an "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET
+      ENGINEERING TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR
+      IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF
+      THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+      WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+12.  Relation to other RFCs
+
+   Sometimes an RFC adds information on a topic discussed in a previous
+   RFC or completely replaces an earlier RFC.  There are two terms used
+   for these cases respectively, Updates and Obsoletes.  A document that
+   obsoletes an earlier document can stand on its own.  A document that
+   merely updates an earlier document cannot stand on its own; it is
+   something that must be added to or inserted into the previously
+   existing document, and has limited usefulness independently.  The
+   terms Supercedes and Replaces are no longer used.
+
+   Updates
+
+      To be used as a reference from a new item that cannot be used
+      alone (i.e., one that supplements a previous document), to refer
+      to the previous document.  The newer publication is a part that
+      will supplement or be added on to the existing document; e.g., an
+      addendum, or separate, extra information that is to be added to
+      the original document.
+
+   Obsoletes
+
+      To be used to refer to an earlier document that is replaced by
+      this document.  This document contains either revised information,
+      or else all of the same information plus some new information,
+      however extensive or brief that new information is; i.e., this
+      document can be used alone, without reference to the older
+      document.
+
+
+
+
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                     [Page 12]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+      For example:
+
+         On the Assigned Numbers RFCs the term Obsoletes should be used
+         since the new document actually incorporate new information
+         (however brief) into the text of existing information and is
+         more up-to-date than the older document, and hence, replaces it
+         and makes it Obsoletes.
+
+   In lists of RFCs or the RFC-Index (but not on the RFCs themselves)
+   the following may be used with early documents to point to later
+   documents.
+
+   Obsoleted-by
+
+      To be used to refer to the newer document(s) that replaces the
+      older document.
+
+   Updated-by
+
+      To be used to refer to the newer section(s) which are to be added
+      to the existing, still used, document.
+
+13.  Protocol Standards Process
+
+   See the current "Internet Official Protocol Standards" (STD 1) memo
+   for the definitive statement on protocol standards and their
+   publication [1].
+
+   The established procedure is that when the IESG completes work on a
+   document that is to become a standards track RFC the communication
+   will be from the Secretary of the IESG to the RFC Editor.  Generally,
+   the documents in question are Internet Drafts.  The communication
+   usually cites the exact Internet Draft (by file name) in question.
+   The RFC Editor must assume that only that file is to be processed to
+   become the RFC.  If the authors have small corrections to the text,
+   they should be sent to the RFC Editor separately (or as a "diff"), do
+   not send a new version of the document.
+
+14.  Contact
+
+   To contact the RFC Editor send an email message to:
+
+         "rfc-editor@isi.edu".
+
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                     [Page 13]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+15.  Distribution Lists
+
+   The RFC announcements are distributed via two mailing lists: the
+   "IETF-Announce" list, and the "RFC-DIST" list.  You don't want to be
+   on both lists.
+
+   To join (or quit) the IETF-Announce list send a message to ietf-
+   request@ietf.org.
+
+   To join (or quit) the RFC-DIST list send a message to rfc-dist-
+   request@isi.edu.
+
+16.  RFC Index
+
+   Several organizations maintain RFC Index files, generally using the
+   file name "rfc-index.txt".  The contents of such a file copied from
+   one site may not be identical to that copied from another site.
+
+17.  Security Considerations
+
+   This RFC raises no security issues (however, see Section 9).
+
+18.  References
+
+   [1]  Postel, J., Editor, "Internet Official Protocol Standards", STD
+        1, RFC 2200, June 1997.
+
+   [2]  Bradner, S., "The Internet Standards Process -- Revision 3", BCP
+        9, RFC 2026, October 1996.
+
+   [3]  Bradner, S., "Key words for use in RFCs to Indicate Requirement
+        Levels", BCP 14, RFC 2119, March 1997.
+
+   [4]  Malkin, G., and J. Reynolds, "F.Y.I. on F.Y.I Introduction to
+        the F.Y.I. Notes", FYI 1, RFC 1150, March 1990.
+
+   [5]  Postel, J., Li, T., and Y. Rekhter, "Best Current Practices",
+        BCP 1, RFC 1818, August 1995.
+
+   [6]  Postel, J., Editor, "Introduction to the STD Notes", RFC 1311,
+        March 1992.
+
+
+
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                     [Page 14]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+19.  Authors' Addresses
+
+   Jon Postel
+   USC/Information Sciences Institute
+   4676 Admiralty Way
+   Marina del Rey, CA  90292
+
+   Phone: +1 310-822-1511
+   Fax:   +1 310-823-6714
+   EMail: Postel@ISI.EDU
+
+
+   Joyce K. Reynolds
+   USC/Information Sciences Institute
+   4676 Admiralty Way
+   Marina del Rey, CA  90292
+
+   Phone: +1 310-822-1511
+   Fax:   +1 310-823-6714
+   EMail: jkrey@isi.edu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                     [Page 15]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+20.  Appendix - RFC "nroff macros"
+
+   Generally, we use the very simplest nroff features.  We use the "ms"
+   macros.  So, "nroff -ms input-file > output-file".  However, we could
+   not get nroff to do the right thing about putting a form feed after
+   the last visible line on a page and no extra line feeds before the
+   first visible line of the next page.  We want:
+
+        last visible line on page i
+        ^L
+        first visible line on page i+1
+
+   So, we invented a hack to fix this.  We use a perl script called
+   "fix.pl".  So the command to process the file becomes:
+
+        nroff -ms input-file | fix.pl > output-file
+
+   The actual perl script is:
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#! /local/bin/perl
+
+# fix.pl  17-Nov-93  Craig Milo Rogers at USC/ISI
+#
+#       The style guide for RFCs calls for pages to be delimited by the
+# sequence <last-non-blank-line><formfeed-line><first-non-blank-line>.
+# Unfortunately, NROFF is reluctant to produce output that conforms to
+# this convention.  This script fixes RFC-style documents by searching
+# for the token "FORMFEED[Page", replacing "FORMFEED" with spaces,
+# appending a formfeed line, and deleting white space up to the next
+# non-white space character.
+#
+#       There is one difference between this script's output and that of
+# the "fix.sh" and "pg" programs it replaces:  this script includes a
+# newline after the formfeed after the last page in a file, whereas the
+# earlier programs left a bare formfeed as the last character in the
+# file.  To obtain bare formfeeds, uncomment the second substitution
+# command below.  To strip the final formfeed, uncomment the third
+# substitution command below.
+#
+#       This script is intended to run as a filter, as in:
+#
+# nroff -ms input-file | fix.pl > output-file
+#
+#       When porting this script, please observe the following points:
+#
+# 1)    ISI keeps perl in "/local/bin/perl";  your system may keep it
+
+
+
+Postel & Reynolds            Informational                     [Page 16]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+#       elsewhere.
+# 2)    On systems with a CRLF end-of-line convention, the "\n"s below
+#       may have to be replaced with "\r\n"s.
+
+$* = 1;                                 # Enable multiline patterns.
+undef $/;                               # Read whole files in a single
+                                        # gulp.
+
+while (<>) {                            # Read the entire input file.
+    s/FORMFEED(\[Page\s+\d+\])\s+/        \1\n\f\n/g;
+                                        # Rewrite the end-of-pages.
+#    s/\f\n$/\f/;                       # Want bare formfeed at end?
+#    s/\f\n$//;                         # Want no formfeed at end?
+    print;                              # Print the resultant file.
+}
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+   This script can also be copied from: ftp://ftp.isi.edu/in-notes/rfc-
+   editor/fix.pl
+
+   Now as to the nroff features we actually use, following is a sample
+   memo, prepared in RFC style.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Postel & Reynolds            Informational                     [Page 17]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+.pl 10.0i
+.po 0
+.ll 7.2i
+.lt 7.2i
+.nr LL 7.2i
+.nr LT 7.2i
+.ds LF Waitzman
+.ds RF PUTFFHERE[Page %]
+.ds CF
+.ds LH RFC 1149
+.ds RH 1 April 1990
+.ds CH IP Datagrams on Avian Carriers
+.hy 0
+.ad l
+.in 0
+Network Working Group                                        D. Waitzman
+Request for Comments: 1149                                       BBN STC
+                                                            1 April 1990
+
+
+.ce
+A Standard for the Transmission of IP Datagrams on Avian Carriers
+
+.ti 0
+Status of this Memo
+
+.fi
+.in 3
+This memo describes an experimental method for the encapsulation of IP
+datagrams in avian carriers.  This specification is primarily useful
+in Metropolitan Area Networks.  This is an experimental, not recommended
+standard.  Distribution of this memo is unlimited.
+
+.ti 0
+Overview and Rational
+
+Avian carriers can provide high delay, low throughput, and low
+altitude service.  The connection topology is limited to a single
+point-to-point path for each carrier, used with standard carriers, but
+many carriers can be used without significant interference with each
+other, outside of early spring.  This is because of the 3D ether space
+available to the carriers, in contrast to the 1D ether used by
+IEEE802.3.  The carriers have an intrinsic collision avoidance system,
+which increases availability.  Unlike some network technologies, such
+as packet radio, communication is not limited to line-of-sight
+distance.  Connection oriented service is available in some cities,
+usually based upon a central hub topology.
+
+
+
+
+Postel & Reynolds            Informational                     [Page 18]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+.ti 0
+Frame Format
+
+The IP datagram is printed, on a small scroll of paper, in
+hexadecimal, with each octet separated by whitestuff and blackstuff.
+The scroll of paper is wrapped around one leg of the avian carrier.
+A band of duct tape is used to secure the datagram's edges.  The
+bandwidth is limited to the leg length.  The MTU is variable, and
+paradoxically, generally increases with increased carrier age.  A
+typical MTU is 256 milligrams.  Some datagram padding may be needed.
+
+Upon receipt, the duct tape is removed and the paper copy of the
+datagram is optically scanned into a electronically transmittable
+form.
+
+.ti 0
+Discussion
+
+Multiple types of service can be provided with a prioritized pecking
+order.  An additional property is built-in worm detection and
+eradication.  Because IP only guarantees best effort delivery, loss of
+a carrier can be tolerated.  With time, the carriers are
+self-regenerating.  While broadcasting is not specified, storms can
+cause data loss.  There is persistent delivery retry, until the
+carrier drops.  Audit trails are automatically generated, and can
+often be found on logs and cable trays.
+
+.ti 0
+Security Considerations
+
+.in 3
+Security is not generally a problem in normal operation, but special
+measures must be taken (such as data encryption) when avian carriers
+are used in a tactical environment.
+
+.ti 0
+Author's Address
+
+.nf
+David Waitzman
+BBN Systems and Technologies Corporation
+BBN Labs Division
+10 Moulton Street
+Cambridge, MA 02238
+
+Phone: (617) 873-4323
+
+EMail: dwaitzman@BBN.COM
+
+
+
+Postel & Reynolds            Informational                     [Page 19]
+
+RFC 2223              Instructions to RFC Authors           October 1997
+
+
+21.  Full Copyright Statement
+
+   Copyright (C) The Internet Society (1997).  All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implmentation may be prepared, copied, published and
+   distributed, in whole or in part, without restriction of any kind,
+   provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works.  However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assigns.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE."
+
+Postel & Reynolds            Informational                     [Page 20]
+
