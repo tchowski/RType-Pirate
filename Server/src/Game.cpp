@@ -39,7 +39,7 @@ void Game::start_game(boost::asio::io_service& io_service)
 bool Game::check_unique(udp::endpoint& sender)
 {
     for (auto i : this->clients_endpoints_) {
-        if (i.address().to_string().compare(sender.address().to_string()) == 0)
+        if (i == sender)
             return true;
     }
     return false;
@@ -47,6 +47,7 @@ bool Game::check_unique(udp::endpoint& sender)
 
 void Game::add_player()
 {
+    // std::cout << sender_endpoint_ << std::endl;
     if (clients_endpoints_.empty() || !check_unique(sender_endpoint_)) {
         std::cout << "Client adresse: " << sender_endpoint_.address().to_string() << std::endl;
         clients_endpoints_.push_back(sender_endpoint_);

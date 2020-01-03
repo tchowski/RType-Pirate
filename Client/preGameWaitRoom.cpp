@@ -140,7 +140,10 @@ int ConnectToRoom()
     memset(&servaddr, 0, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(8080);
-    servaddr.sin_addr.s_addr = INADDR_ANY;
+    // servaddr.sin_addr.s_addr = INADDR_ANY;
+    if (inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr) <= 0) {
+        throw "\nInvalid address/ Address not supported \n";
+    }
 
     if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
         throw "\nConnection Failed \n";
@@ -224,7 +227,7 @@ void set_struct_serv(struct sockaddr_in* serv_addr)
 {
     serv_addr->sin_family = AF_INET;
     serv_addr->sin_port = htons(PORT);
-    if (inet_pton(AF_INET, "83.199.241.208", &serv_addr->sin_addr) <= 0) {
+    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr->sin_addr) <= 0) {
         throw "\nInvalid address/ Address not supported \n";
     }
 }
