@@ -1,0 +1,4 @@
+/home/max/Epitech2019/CPP/hack/RType-Pirate/build/CMakeFiles/rebuild_cache.dir
+/home/max/Epitech2019/CPP/hack/RType-Pirate/build/CMakeFiles/edit_cache.dir
+/home/max/Epitech2019/CPP/hack/RType-Pirate/build/CMakeFiles/r-type_server.dir
+/home/max/Epitech2019/CPP/hack/RType-Pirate/build/CMakeFiles/r-type_client.dir

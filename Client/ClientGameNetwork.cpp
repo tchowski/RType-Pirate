@@ -56,15 +56,30 @@ void ClientGameNetwork::receive(Factory& factory, int nb_player)
 {
     recvfrom(sockfd_, (char*)data_buffer_, 1024, MSG_DONTWAIT, (struct sockaddr*)&servaddr, &sock_);
     getDataStruct();
-    // if (data_->destruct == "Destruct") {
-    //     if (factory.getDrawableComponentsList().hasThisComponent(data_->pos.first))
-    //         factory.getDrawableComponentsList().deleteComponent(data_->pos.first);
-    // }
+    if (data_->destruct == "Destruct") {
+        if (factory.getDrawableComponentsList().hasThisComponent(data_->pos.first))
+            factory.getDrawableComponentsList().deleteComponent(data_->pos.first);
+    }
     if (data_->pos.first >= 1 && data_->pos.first <= 4) {
-        if (factory.getPositionComponentsList().hasThisComponent(data_->pos.first) && data_->pos.first != nb_player)
+        if (factory.getPositionComponentsList().hasThisComponent(data_->pos.first) && data_->pos.first != nb_player) {
             factory.getPositionComponentsList().setComponent(data_->pos.first, data_->pos.second);
+            if (data_->fired) {
+                if (!factory.getDrawableComponentsList().hasThisComponent(data_->pos.first + 4))
+                    factory.getDrawableComponentsList().addComponent(data_->pos.first + 4, "Charge_attack");
+                factory.getDrawableComponentsList().setComponent(data_->pos.first + 4, "Charge_attack");
+            } else if (!data_->fired) {
+                if (!factory.getDrawableComponentsList().hasThisComponent(data_->pos.first + 4))
+                    factory.getDrawableComponentsList().addComponent(data_->pos.first + 4, "Empty");
+                factory.getDrawableComponentsList().setComponent(data_->pos.first + 4, "Empty");
+            }
+            if (!factory.getPositionComponentsList().hasThisComponent(data_->pos.first + 4))
+                factory.getPositionComponentsList().addComponent(data_->pos.first + 4, std::pair<float, float>(0, 0));
+            if (factory.getPositionComponentsList().hasThisComponent(data_->pos.first + 4) && factory.getPositionComponentsList().hasThisComponent(data_->pos.first))
+                factory.getPositionComponentsList().setComponent(data_->pos.first + 4, factory.getPositionComponentsList().getComponent(data_->pos.first));
+        }
     }
 }
+
 
 void ClientGameNetwork::send(Factory& factory, int nb_player, bool fired)
 {

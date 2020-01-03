@@ -167,7 +167,6 @@ int LaunchStage(const int &nb_player, const int& difficulty_max, const std::stri
         factory.getAudioComponentsList().addComponent(id, sounds);
         id++;
     }
-    //game->start_server();
     //cpMusics.addComponent(0, music_name);
     while (GLib.isWindowOpen()) {
         fired = false;

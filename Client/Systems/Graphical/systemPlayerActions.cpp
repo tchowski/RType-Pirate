@@ -17,24 +17,25 @@ void systemPlayerActions::update(const int &nb_player)
 {
     int state_attack = sysEvent.update(SPACE);
     bool moved = false;
+    bool firing = false;
     
     if (state_attack == CLICKED) {
-        if (!factory.getDrawableComponentsList().hasThisComponent(5))
-            factory.getDrawableComponentsList().addComponent(5, "Charge_attack");
-        factory.getDrawableComponentsList().setComponent(5, "Charge_attack");
+        if (!factory.getDrawableComponentsList().hasThisComponent(nb_player + 4))
+            factory.getDrawableComponentsList().addComponent(nb_player + 4, "Charge_attack");
+        factory.getDrawableComponentsList().setComponent(nb_player + 4, "Charge_attack");
         sysSound.update({"Charge1"}, false);
     } else if (state_attack == UNCLICKED) {
         sysSound.update({"Uncharge"}, false);
-        if (!factory.getDrawableComponentsList().hasThisComponent(5))
-            factory.getDrawableComponentsList().addComponent(5, "Empty");
-        factory.getDrawableComponentsList().setComponent(5, "Empty");
-        game->send(factory, nb_player, true);
+        if (!factory.getDrawableComponentsList().hasThisComponent(nb_player + 4))
+            factory.getDrawableComponentsList().addComponent(nb_player + 4, "Empty");
+        factory.getDrawableComponentsList().setComponent(nb_player + 4, "Empty");
+        firing = true;
     }
     //Move the charge attack to the player 
-    if (!factory.getPositionComponentsList().hasThisComponent(5))
-        factory.getPositionComponentsList().addComponent(5, std::pair<float, float>(0, 0));
-    if (factory.getPositionComponentsList().hasThisComponent(5) && factory.getPositionComponentsList().hasThisComponent(nb_player))
-        factory.getPositionComponentsList().setComponent(5, factory.getPositionComponentsList().getComponent(nb_player));
+    if (!factory.getPositionComponentsList().hasThisComponent(nb_player + 4))
+        factory.getPositionComponentsList().addComponent(nb_player + 4, std::pair<float, float>(0, 0));
+    if (factory.getPositionComponentsList().hasThisComponent(nb_player + 4) && factory.getPositionComponentsList().hasThisComponent(nb_player))
+        factory.getPositionComponentsList().setComponent(nb_player + 4, factory.getPositionComponentsList().getComponent(nb_player));
     //reset to default ship sprite 
     if (factory.getDrawableComponentsList().hasThisComponent(nb_player) && (sysEvent.update(UP) == UNCLICKED))
         factory.getDrawableComponentsList().setComponent(nb_player, pathsTextures[nb_player].first);
@@ -77,7 +78,7 @@ void systemPlayerActions::update(const int &nb_player)
             moved = true;
         }
     }
-    if (moved) {
-        game->send(factory, nb_player, false);
+    if (moved || firing) {
+        game->send(factory, nb_player, firing);
     }
 }
