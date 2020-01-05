@@ -307,7 +307,7 @@ int connectServer(int &nb_player, const std::string& my_nickname, GraphicalLib& 
         cpSounds.addComponent(id, *path);
         id++;
     }
-    //sysSound.update({ "Server" }, false);
+    sysSound.update({ "Server" }, false);
     printf("Getting Loop isWindowOpen()\n");
     while (GLib.isWindowOpen()) {
          if (getClientsStatesandNames(client_states, nicknames, sock_room, tempsize) == 1) {
@@ -337,6 +337,7 @@ int connectServer(int &nb_player, const std::string& my_nickname, GraphicalLib& 
             postest = CAMPAIGN;
         displayNicknames(GLib, nicknames);
         chooseGameMode(postest, pathsTextures, cpDrawable, cpPositions);
+        sysSound.update({ "Server" }, true);
         sysDraw.update(true);
         setBackground(client_states, pathsTextures, cpDrawable, cpPositions, sysSound);
     }

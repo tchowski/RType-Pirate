@@ -41,10 +41,10 @@ void DEBUG(network_buffer* data)
 
 network_buffer* ClientGameNetwork::getDataStruct()
 {
-    std::cout << "Message receive from server: " << std::endl;
+    //std::cout << "Message receive from server: " << std::endl;
     network_buffer* buffer = new network_buffer;
     buffer = reinterpret_cast<network_buffer*>(data_buffer_);
-    DEBUG(buffer);
+    //DEBUG(buffer);
     memcpy(data_, buffer, sizeof(network_buffer));
     return data_;
 }
@@ -89,7 +89,7 @@ void ClientGameNetwork::send(Factory& factory, int nb_player, bool fired)
     if (factory.getPositionComponentsList().hasThisComponent(nb_player)) {
         setDataStruct(" ", " ", fired, nb_player, factory.getPositionComponentsList().getComponent(nb_player));
         sendto(sockfd_, data_buffer_, sizeof(network_buffer), 0, (const struct sockaddr*)&servaddr, sizeof(servaddr));
-        printf("Message sent to server! \n\n");
+        //printf("Message sent to server! \n\n");
     }
 }
 
