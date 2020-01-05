@@ -52,10 +52,10 @@ int playIntro(GraphicalLib &GLib, SoundLib &SLib)
         cpListMusics.addComponent(id, *path);
         id++;
     }
-    // sysSound.update({"MenuIntro"}, false);
+    sysSound.update({"MenuIntro"}, false);
     while (GLib.isWindowOpen())
     {
-        // sysSound.update({"MenuLoop"}, true);
+        sysSound.update({"MenuLoop"}, true);
         if (sysEvent.update(CLOSE) == TRUE)
             GLib.destroyWindow();
         if (sysEvent.update(SPACE) == PRESSED) {

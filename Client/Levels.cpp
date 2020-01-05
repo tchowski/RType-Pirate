@@ -97,6 +97,22 @@ int StageClearScreen2(GraphicalLib& GLib, SoundLib& SLib, Factory& factory)
     return EXIT_FAILURE;
 }
 
+void moveAndDestroyMobs(Factory &factory)
+{
+    for (int id = 10; id < 100; id++) {
+        if (factory.getPositionComponentsList().hasThisComponent(id)) {
+            if (factory.getPositionComponentsList().getComponent(id).first < 0) {
+                factory.getPositionComponentsList().deleteComponent(id);
+                factory.getDrawableComponentsList().deleteComponent(id);
+            } else {
+                std::pair<float, float> pos = factory.getPositionComponentsList().getComponent(id);
+                pos.first -= 0.5f;
+                factory.getPositionComponentsList().setComponent(id, pos);
+            }
+        }
+    }
+}
+
 int LaunchStage(const int &nb_player, const int& difficulty_max, const std::string& music_name, GraphicalLib& GLib, SoundLib& SLib, Factory& factory)
 {
     ComponentTypeList<std::string> cpMusics;
@@ -167,20 +183,18 @@ int LaunchStage(const int &nb_player, const int& difficulty_max, const std::stri
         factory.getAudioComponentsList().addComponent(id, sounds);
         id++;
     }
-    //cpMusics.addComponent(0, music_name);
+    cpMusics.addComponent(0, music_name);
     while (GLib.isWindowOpen()) {
         fired = false;
-        //sysSound.update({ music_name }, false);
+        sysSound.update({ music_name }, false);
         sysPActions.update(nb_player);
-        //exit
         game->receive(factory, nb_player);
         if (sysEvent.update(CLOSE) == TRUE) {
             game->disconnect(nb_player);
             GLib.destroyWindow();
         }
+        moveAndDestroyMobs(factory);
         sysDraw.update(true);
-
-        //send pos to server//
     }
     return PLAY;
 }

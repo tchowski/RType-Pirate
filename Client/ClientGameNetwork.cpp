@@ -40,10 +40,10 @@ void DEBUG(network_buffer* data)
 
 network_buffer* ClientGameNetwork::getDataStruct()
 {
-    std::cout << "Message receive from server: " << std::endl;
+    //std::cout << "Message receive from server: " << std::endl;
     network_buffer* buffer = new network_buffer;
     buffer = reinterpret_cast<network_buffer*>(data_buffer_);
-    DEBUG(buffer);
+    //DEBUG(buffer);
     memcpy(data_, buffer, sizeof(network_buffer));
     return data_;
 }
@@ -57,20 +57,19 @@ void ClientGameNetwork::disconnect(int nb_player)
 
 void ClientGameNetwork::receive(Factory& factory, int nb_player)
 {
-    int sprite = 1 + (rand() % 7);
     int id = 10;
     recvfrom(sockfd_, (char*)data_buffer_, 1024, MSG_DONTWAIT, (struct sockaddr*)&servaddr, &sock_);
     getDataStruct();
     if (data_->isMobSpawned) {
         for (; factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++);
-        if (!factory.getDrawableComponentsList().hasThisComponent(id)) {
-            factory.getDrawableComponentsList().addComponent(id, "Enemy" + std::to_string(sprite));
-            factory.getPositionComponentsList().addComponent(id, std::pair<float, float>(1800, 540));
+        if (!factory.getDrawableComponentsList().hasThisComponent(id) && id != 100) {
+            factory.getDrawableComponentsList().addComponent(id, "Enemy3");
+            factory.getPositionComponentsList().addComponent(id, std::pair<float, float>(1920, 540));
         }
     }
     if (data_->fired == true) {
         for (id = 10; !factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++);
-        if (factory.getDrawableComponentsList().hasThisComponent(id)) {
+        if (factory.getPositionComponentsList().hasThisComponent(id) && factory.getDrawableComponentsList().hasThisComponent(id) && id != 100) {
             factory.getDrawableComponentsList().deleteComponent(id);
             factory.getPositionComponentsList().deleteComponent(id);
         }
@@ -86,7 +85,7 @@ void ClientGameNetwork::send(Factory& factory, int nb_player, bool fired)
     if (factory.getPositionComponentsList().hasThisComponent(nb_player)) {
         setDataStruct(" ", " ", fired, nb_player, factory.getPositionComponentsList().getComponent(nb_player));
         sendto(sockfd_, data_buffer_, sizeof(network_buffer), 0, (const struct sockaddr*)&servaddr, sizeof(servaddr));
-        printf("Message sent to server! \n\n");
+        //printf("Message sent to server! \n\n");
     }
 }
 
