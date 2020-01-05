@@ -13,7 +13,7 @@ void ClientGameNetwork::setServAddr()
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(PORT_GAME_THREAD);
     // servaddr.sin_addr.s_addr = INADDR_ANY;
-    if (inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, ip_addr_.c_str(), &servaddr.sin_addr) <= 0) {
         throw "\nInvalid address/ Address not supported \n";
     }
 }
@@ -36,6 +36,7 @@ void DEBUG(network_buffer* data)
     std::cout << "Data fired: " << data->fired << std::endl;
     std::cout << "Data id: " << data->pos.first << std::endl;
     std::cout << "Data pos: " << data->pos.second.first << "," << data->pos.second.second << std::endl;
+    std::cout << "Mob Spawn: " << data->isMobSpawned << std::endl;
 }
 
 network_buffer* ClientGameNetwork::getDataStruct()
@@ -57,19 +58,21 @@ void ClientGameNetwork::disconnect(int nb_player)
 
 void ClientGameNetwork::receive(Factory& factory, int nb_player)
 {
-    int sprite = 1 + (rand() % 7);
     int id = 10;
-    recvfrom(sockfd_, (char*)data_buffer_, 1024, MSG_DONTWAIT, (struct sockaddr*)&servaddr, &sock_);
+    recvfrom(sockfd_, data_buffer_, 1024, MSG_DONTWAIT, (struct sockaddr*)&servaddr, &sock_);
     getDataStruct();
     if (data_->isMobSpawned) {
-        for (; factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++);
+        int sprite = 3;
+        for (; factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++)
+            ;
         if (!factory.getDrawableComponentsList().hasThisComponent(id)) {
             factory.getDrawableComponentsList().addComponent(id, "Enemy" + std::to_string(sprite));
             factory.getPositionComponentsList().addComponent(id, std::pair<float, float>(1800, 540));
         }
     }
     if (data_->fired == true) {
-        for (id = 10; !factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++);
+        for (id = 10; !factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++)
+            ;
         if (factory.getDrawableComponentsList().hasThisComponent(id)) {
             factory.getDrawableComponentsList().deleteComponent(id);
             factory.getPositionComponentsList().deleteComponent(id);
@@ -90,11 +93,12 @@ void ClientGameNetwork::send(Factory& factory, int nb_player, bool fired)
     }
 }
 
-ClientGameNetwork::ClientGameNetwork()
+ClientGameNetwork::ClientGameNetwork(std::string ip_addr)
 {
     if ((sockfd_ = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
         throw "socket creation failed";
     }
+    ip_addr_ = ip_addr;
     data_ = new network_buffer;
     setServAddr();
 }

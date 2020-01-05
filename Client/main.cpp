@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
     int nb_player = 1;
     std::string path(argv[0]);
     std::string name = (argc > 1 ? argv[1] : "You");
+    std::string ip_addr = (argc > 2 ? argv[2] : "127.0.0.1");
 
     GLib.createWindow();
     path = path.substr(0, path.find_last_of("/"));
@@ -30,28 +31,28 @@ int main(int argc, char* argv[])
     if (playIntro(GLib, SLib) == EXIT_FAILURE)
         return EXIT_FAILURE;
     while (GLib.isWindowOpen()) {
-        game_mode = connectServer(nb_player, name, GLib, SLib);
+        game_mode = connectServer(nb_player, name, GLib, SLib, ip_addr);
         if (game_mode == EXIT_FAILURE)
             return EXIT_FAILURE;
         if (game_mode == SURVIVAL) {
-            LaunchStage(nb_player, -1, "Stage1", GLib, SLib, factory);
+            LaunchStage(nb_player, -1, "Stage1", GLib, SLib, factory, ip_addr);
         } else if (game_mode == CAMPAIGN) {
             while (return_value == GAMEOVER) {
-                return_value = LaunchStage(nb_player, 25, "Stage1", GLib, SLib, factory);
+                return_value = LaunchStage(nb_player, 25, "Stage1", GLib, SLib, factory, ip_addr);
                 if (return_value == GAMEOVER)
                     GameOverScreen(GLib, SLib, factory);
             }
             StageClearScreen1(GLib, SLib, factory);
             return_value = GAMEOVER;
             while (return_value == GAMEOVER) {
-                return_value = LaunchStage(nb_player, 50, "Stage2", GLib, SLib, factory);
+                return_value = LaunchStage(nb_player, 50, "Stage2", GLib, SLib, factory, ip_addr);
                 if (return_value == GAMEOVER)
                     GameOverScreen(GLib, SLib, factory);
             }
             StageClearScreen2(GLib, SLib, factory);
             return_value = GAMEOVER;
             while (return_value == GAMEOVER) {
-                return_value = LaunchStage(nb_player, 75, "FinalBoss", GLib, SLib, factory);
+                return_value = LaunchStage(nb_player, 75, "FinalBoss", GLib, SLib, factory, ip_addr);
                 if (return_value == GAMEOVER)
                     GameOverScreen(GLib, SLib, factory);
             }

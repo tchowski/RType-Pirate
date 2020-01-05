@@ -97,10 +97,10 @@ int StageClearScreen2(GraphicalLib& GLib, SoundLib& SLib, Factory& factory)
     return EXIT_FAILURE;
 }
 
-int LaunchStage(const int &nb_player, const int& difficulty_max, const std::string& music_name, GraphicalLib& GLib, SoundLib& SLib, Factory& factory)
+int LaunchStage(const int &nb_player, const int& difficulty_max, const std::string& music_name, GraphicalLib& GLib, SoundLib& SLib, Factory& factory, std::string ip_addr)
 {
     ComponentTypeList<std::string> cpMusics;
-    std::shared_ptr<ClientGameNetwork> game(new ClientGameNetwork);
+    std::shared_ptr<ClientGameNetwork> game(new ClientGameNetwork(ip_addr));
     systemDraw sysDraw(GLib, factory.getPositionComponentsList(), factory.getDrawableComponentsList());
     systemEvent sysEvent(GLib);
     systemSound sysSound(SLib, cpMusics, factory.getAudioComponentsList());

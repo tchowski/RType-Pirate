@@ -52,11 +52,11 @@ private:
 	std::vector<std::shared_ptr<Client>> Client_;
 	int cpt = 0;
 	network_buffer *data_struct;
-	Factory factory_;
-	systemSpawn sSpawn_;
-	systemHitbox sHitbox_;
-	systemApplyDmg sApplyDmg_;
-	systemHorizalMove sHorizalMove_;
+	// Factory factory_;
+	// systemSpawn sSpawn_;
+	// systemHitbox sHitbox_;
+	// systemApplyDmg sApplyDmg_;
+	// systemHorizalMove sHorizalMove_;
 };
 
 #endif /* !connection */

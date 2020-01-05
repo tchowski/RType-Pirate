@@ -25,4 +25,4 @@ int GameOverScreen(GraphicalLib &GLib, SoundLib &SLib, Factory &factory);
 int VictoryScreen(GraphicalLib &GLib, SoundLib &SLib, Factory &factory);
 int StageClearScreen1(GraphicalLib &GLib, SoundLib &SLib, Factory &factory);
 int StageClearScreen2(GraphicalLib &GLib, SoundLib &SLib, Factory &factory);
-int LaunchStage(const int &nb_player, const int &difficulty_max, const std::string &music_name, GraphicalLib &GLib, SoundLib &SLib, Factory &factory);
+int LaunchStage(const int &nb_player, const int &difficulty_max, const std::string &music_name, GraphicalLib &GLib, SoundLib &SLib, Factory &factory, std::string ip_addr);

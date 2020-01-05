@@ -21,4 +21,4 @@ enum GAMEMODE
 
 #define NB_MAX_PLAYER 4
 
-int connectServer(int &nb_player, const std::string &nickname, GraphicalLib &GLib, SoundLib &SLib);
+int connectServer(int &nb_player, const std::string &nickname, GraphicalLib &GLib, SoundLib &SLib, std::string ip_addr);

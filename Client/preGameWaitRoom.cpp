@@ -125,7 +125,7 @@ void resize_vectors(std::vector<std::string>& nicknames, std::vector<bool>& clie
     // client_states.resize(i);
 }
 
-int ConnectToRoom()
+int ConnectToRoom(std::string ip_addr)
 {
     int sockfd;
     char buffer[1024];
@@ -141,7 +141,7 @@ int ConnectToRoom()
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(8080);
     // servaddr.sin_addr.s_addr = INADDR_ANY;
-    if (inet_pton(AF_INET, "127.0.0.1", &servaddr.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, ip_addr.c_str(), &servaddr.sin_addr) <= 0) {
         throw "\nInvalid address/ Address not supported \n";
     }
 
@@ -223,16 +223,16 @@ int getClientsStatesandNames(std::vector<bool>& client_states, std::vector<std::
     return 0;
 }
 
-void set_struct_serv(struct sockaddr_in* serv_addr)
+void set_struct_serv(struct sockaddr_in* serv_addr, std::string ip_addr)
 {
     serv_addr->sin_family = AF_INET;
     serv_addr->sin_port = htons(PORT);
-    if (inet_pton(AF_INET, "127.0.0.1", &serv_addr->sin_addr) <= 0) {
+    if (inet_pton(AF_INET, ip_addr.c_str(), &serv_addr->sin_addr) <= 0) {
         throw "\nInvalid address/ Address not supported \n";
     }
 }
 
-int connectServer(int &nb_player, const std::string& my_nickname, GraphicalLib& GLib, SoundLib& SLib)
+int connectServer(int &nb_player, const std::string& my_nickname, GraphicalLib& GLib, SoundLib& SLib, std::string ip_addr)
 {
     int sock_room;
     char buff[80];
@@ -242,7 +242,7 @@ int connectServer(int &nb_player, const std::string& my_nickname, GraphicalLib& 
         printf("socket error: %s\n", strerror(errno));
         return (84);
     }
-    set_struct_serv(&serv_addr);
+    set_struct_serv(&serv_addr, ip_addr);
     if (connect(sock_room, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("connect error: %s\n", strerror(errno));
     }
@@ -328,7 +328,7 @@ int connectServer(int &nb_player, const std::string& my_nickname, GraphicalLib& 
         if (sysEvent.update(CLOSE) == TRUE)
             GLib.destroyWindow();
         if (sysEvent.update(RETURN) == CLICKED) {
-            ConnectToRoom();
+            ConnectToRoom(ip_addr);
             std::cout << " Connect To Room " << std::endl;
         }
         if (sysEvent.update(LEFT) == CLICKED && postest == CAMPAIGN)

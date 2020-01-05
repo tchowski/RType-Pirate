@@ -8,14 +8,14 @@
 #include "Game.hpp"
 #include <iostream>
 
-Game::Game(const std::string &currentdir, boost::asio::io_service &io_service, std::vector<std::shared_ptr<Client>> Clients, short port)
+Game::Game(const std::string& currentdir, boost::asio::io_service& io_service, std::vector<std::shared_ptr<Client>> Clients, short port)
     : current_dir(currentdir)
     , socket_(io_service, udp::v4())
     , Client_(Clients)
-    , sSpawn_(current_dir)
-    , sHitbox_(factory_.getPositionComponentsList(), factory_.getHitboxComponentsList(), QUADTREE_MAX_DEPTH, QUADTREE_MAX_ENTITY)
-    , sApplyDmg_(factory_.getTeamComponentsList())
-    , sHorizalMove_(factory_.getHorizontalMoveComponentsList(), factory_.getPositionComponentsList())
+// , sSpawn_(current_dir)
+// , sHitbox_(factory_.getPositionComponentsList(), factory_.getHitboxComponentsList(), QUADTREE_MAX_DEPTH, QUADTREE_MAX_ENTITY)
+// , sApplyDmg_(factory_.getTeamComponentsList())
+// , sHorizalMove_(factory_.getHorizontalMoveComponentsList(), factory_.getPositionComponentsList())
 {
     boost::asio::socket_base::reuse_address option(true);
     socket_.set_option(option);
@@ -65,9 +65,9 @@ void Game::handle_receive_from(const boost::system::error_code& error, size_t by
 
     add_player();
     data_struct = (network_buffer*)data_;
+    spawning = this->runGameLoop();
+    data_struct->isMobSpawned = spawning;
     for (auto i : clients_endpoints_) {
-        spawning = this->runGameLoop();
-        data_struct->isMobSpawned = spawning;
         if (!error && bytes_recvd > 0) {
             socket_.async_send_to(
                 boost::asio::buffer(data_, bytes_recvd), i,
@@ -94,8 +94,6 @@ void Game::handle_send_to(const boost::system::error_code&, size_t bytes_recv)
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
 }
-
-
 
 bool Game::runGameLoop()
 {
