@@ -17,6 +17,7 @@ struct network_buffer {
     std::string update;
     std::string destruct;
     bool fired;
+    bool isMobSpawned;
     std::pair<unsigned int, std::pair<float, float>> pos;
 };
 

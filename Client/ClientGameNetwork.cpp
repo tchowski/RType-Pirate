@@ -57,14 +57,26 @@ void ClientGameNetwork::disconnect(int nb_player)
 
 void ClientGameNetwork::receive(Factory& factory, int nb_player)
 {
+    int sprite = 1 + (rand() % 7);
+    int id = 10;
     recvfrom(sockfd_, (char*)data_buffer_, 1024, MSG_DONTWAIT, (struct sockaddr*)&servaddr, &sock_);
     getDataStruct();
-    // if (data_->destruct == "Destruct") {
-    //     if (factory.getDrawableComponentsList().hasThisComponent(data_->pos.first))
-    //         factory.getDrawableComponentsList().deleteComponent(data_->pos.first);
-    // }
+    if (data_->isMobSpawned) {
+        for (; factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++);
+        if (!factory.getDrawableComponentsList().hasThisComponent(id)) {
+            factory.getDrawableComponentsList().addComponent(id, "Enemy" + std::to_string(sprite));
+            factory.getPositionComponentsList().addComponent(id, std::pair<float, float>(1800, 540));
+        }
+    }
+    if (data_->fired == true) {
+        for (id = 10; !factory.getDrawableComponentsList().hasThisComponent(id) && id < 100; id++);
+        if (factory.getDrawableComponentsList().hasThisComponent(id)) {
+            factory.getDrawableComponentsList().deleteComponent(id);
+            factory.getPositionComponentsList().deleteComponent(id);
+        }
+    }
     if (data_->pos.first >= 1 && data_->pos.first <= 4) {
-        // if (factory.getPositionComponentsList().hasThisComponent(data_->pos.first) && data_->pos.first != nb_player)
+        if (factory.getPositionComponentsList().hasThisComponent(data_->pos.first) && data_->pos.first != nb_player)
             factory.getPositionComponentsList().setComponent(data_->pos.first, data_->pos.second);
     }
 }

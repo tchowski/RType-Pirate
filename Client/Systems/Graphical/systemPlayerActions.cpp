@@ -17,7 +17,7 @@ void systemPlayerActions::update(const int &nb_player)
 {
     int state_attack = sysEvent.update(SPACE);
     bool moved = false;
-    bool firing = false;
+    static bool firing = false;
     
     if (state_attack == CLICKED) {
         if (!factory.getDrawableComponentsList().hasThisComponent(nb_player + 4))
@@ -30,6 +30,9 @@ void systemPlayerActions::update(const int &nb_player)
             factory.getDrawableComponentsList().addComponent(nb_player + 4, "Empty");
         factory.getDrawableComponentsList().setComponent(nb_player + 4, "Empty");
         firing = true;
+    } else if (state_attack == UNPRESSED && firing == true) {
+        firing = false;
+        moved = true;
     }
     //Move the charge attack to the player 
     if (!factory.getPositionComponentsList().hasThisComponent(nb_player + 4))

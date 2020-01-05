@@ -15,6 +15,7 @@ typedef struct network_buffer {
         std::string construct;
         std::string update;
         std::string destruct;
+        bool isMobSpawned;
         bool fired;
         std::pair<float, float> pos;
     } data_t;

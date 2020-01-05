@@ -12,10 +12,10 @@ Game::Game(const std::string &currentdir, boost::asio::io_service &io_service, s
     : current_dir(currentdir)
     , socket_(io_service, udp::v4())
     , Client_(Clients)
-    // , sSpawn_(current_dir)
-    // , sHitbox_(factory_.getPositionComponentsList(), factory_.getHitboxComponentsList(), QUADTREE_MAX_DEPTH, QUADTREE_MAX_ENTITY)
-    // , sApplyDmg_(factory_.getTeamComponentsList())
-    // , sHorizalMove_(factory_.getHorizontalMoveComponentsList(), factory_.getPositionComponentsList())
+    , sSpawn_(current_dir)
+    , sHitbox_(factory_.getPositionComponentsList(), factory_.getHitboxComponentsList(), QUADTREE_MAX_DEPTH, QUADTREE_MAX_ENTITY)
+    , sApplyDmg_(factory_.getTeamComponentsList())
+    , sHorizalMove_(factory_.getHorizontalMoveComponentsList(), factory_.getPositionComponentsList())
 {
     boost::asio::socket_base::reuse_address option(true);
     socket_.set_option(option);
@@ -61,10 +61,13 @@ std::vector<std::shared_ptr<Client>> Game::get_all_clients()
 
 void Game::handle_receive_from(const boost::system::error_code& error, size_t bytes_recvd)
 {
+    bool spawning = false;
+
     add_player();
     data_struct = (network_buffer*)data_;
     for (auto i : clients_endpoints_) {
-        // this->runGameLoop();
+        spawning = this->runGameLoop();
+        data_struct->isMobSpawned = spawning;
         if (!error && bytes_recvd > 0) {
             socket_.async_send_to(
                 boost::asio::buffer(data_, bytes_recvd), i,
@@ -92,17 +95,16 @@ void Game::handle_send_to(const boost::system::error_code&, size_t bytes_recv)
             boost::asio::placeholders::bytes_transferred));
 }
 
-// void Game::runGameLoop()
-// {
-//     static std::time_t start = 0;
-//     std::time_t nowtime = std::time(nullptr);
 
-//     if (nowtime - start > 5) {
-//         start = nowtime;
-//         factory_.createEntity(factory_.generateNewUniqueID(), sSpawn_.update());
-//     }        
-//     factory_.updateComponents(*data_struct);
-//     sHorizalMove_.update();
-//     factory_.destroyEntity(sApplyDmg_.update(sHitbox_.update(WINDOW_X, WINDOW_Y)));
-//     *data_struct = factory_.prepareServerNetworkBuffer();
-// }
+
+bool Game::runGameLoop()
+{
+    static std::time_t start = 0;
+    std::time_t nowtime = std::time(nullptr);
+
+    if (nowtime - start > 5) {
+        start = nowtime;
+        return true;
+    }
+    return false;
+}

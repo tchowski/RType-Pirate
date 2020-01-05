@@ -39,7 +39,7 @@ public:
 	void start_game(boost::asio::io_service& io_service);
 	void add_player();
 	std::vector<std::shared_ptr<Client>> get_all_clients();
-	void runGameLoop();
+	bool runGameLoop();
 	~Game() = default;
 protected:
 private:
@@ -52,11 +52,11 @@ private:
 	std::vector<std::shared_ptr<Client>> Client_;
 	int cpt = 0;
 	network_buffer *data_struct;
-	// Factory factory_;
-	// systemSpawn sSpawn_;
-	// systemHitbox sHitbox_;
-	// systemApplyDmg sApplyDmg_;
-	// systemHorizalMove sHorizalMove_;
+	Factory factory_;
+	systemSpawn sSpawn_;
+	systemHitbox sHitbox_;
+	systemApplyDmg sApplyDmg_;
+	systemHorizalMove sHorizalMove_;
 };
 
 #endif /* !connection */

@@ -120,10 +120,10 @@ std::string systemSpawn::createNewMob(const int mob)
 std::string systemSpawn::update()
 {
     _str.clear();
-    _since = (std::clock() - _start) / (double)CLOCKS_PER_SEC;
-    _str = this->createNewMob(this->getRandMob()); // generate new mob configuration line randomly
-    if (_since > 3) {
-        _start = std::clock();
+    //_since = (std::clock() - _start) / (double)CLOCKS_PER_SEC;
+    //_str = this->createNewMob(this->getRandMob()); // generate new mob configuration line randomly
+    //if (_since > 3) {
+        //_start = std::clock();
         std::srand(std::time(nullptr));
         int random = std::rand() % 900;
         if (_spawntype == 1) {
@@ -135,6 +135,6 @@ std::string systemSpawn::update()
             _spawntype = 0;
         }
         return _str;
-    }
-    return _str;
+    //}
+    //return _str;
 }
