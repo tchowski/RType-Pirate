@@ -105,5 +105,6 @@ ClientGameNetwork::ClientGameNetwork(std::string ip_addr)
     }
     ip_addr_ = ip_addr;
     data_ = new network_buffer;
+    data_buffer_ = new char[1024];
     setServAddr();
 }
